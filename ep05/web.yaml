@@ -1,5 +1,5 @@
 # Newbernetes · Episode 5 · kubectl and YAML
-# The web Deployment from the demo: generated with --dry-run, then scaled to 3 replicas by hand.
+# The web Deployment from the demo: generated with --dry-run, then manually scaled to 3 replicas
 # Apply:   kubectl apply -f web.yaml
 # Remove:  kubectl delete -f web.yaml
 apiVersion: apps/v1          # which API, and which version of it
