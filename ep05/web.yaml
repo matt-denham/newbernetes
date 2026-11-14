@@ -1,0 +1,23 @@
+# Newbernetes · Episode 5 · kubectl and YAML
+# The web Deployment from the demo: generated with --dry-run, then scaled to 3 replicas by hand.
+# Apply:   kubectl apply -f web.yaml
+# Remove:  kubectl delete -f web.yaml
+apiVersion: apps/v1          # which API, and which version of it
+kind: Deployment             # which type of object
+metadata:                    # its name and labels
+  name: web
+  labels:
+    app: web
+spec:                        # your desired state: what you want to exist
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web               # must match the template's labels below
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27  # a pinned tag, never "latest"
