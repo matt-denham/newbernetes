@@ -1,4 +1,4 @@
-# Newbernetes · Episode 8 · Rolling back the right way
+# Newbernetes · Episode 8 · Proven practices for rolling back
 # The starting file for the rollback demo: two copies of nginx 1.27.
 # Commit it to Git before you start, so you have a history to roll back through.
 apiVersion: apps/v1
