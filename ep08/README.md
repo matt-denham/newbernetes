@@ -1,8 +1,8 @@
-# Episode 8: Rolling back the right way
+# Episode 8: Proven Practices for Rolling Back
 
-`web.yaml` is the starting point for the rollback demo. In the episode I make a good change, then a bad one, undo it the quick way with `kubectl rollout undo`, and show why that leaves your file and your cluster out of sync. Then I fix it properly, by rolling back the file.
+`web.yaml` is the starting point for the rollback demo. In the episode I make a change and then a typo, first undoing it the quick way with `kubectl rollout undo`, and we see why that leaves your file and your cluster out of sync. Then we fix it correctly by rolling back the file.
 
-▶ Watch the episode: https://youtube.com/playlist?list=PLTVdODaaOJ90
+▶ Watch the episode: [Episode 08 - Rolling Back](https://youtu.be/fcJiJPu8KLg?si=UX0Is23yVtw07oUx)
 
 ## Try the demo yourself
 
@@ -13,17 +13,17 @@ git init
 cp /path/to/web.yaml .
 git add web.yaml && git commit -m "web on nginx 1.27"
 
-# 1. A good upgrade, done the declarative way
+# 1. A correct upgrade, done the declarative way
 kubectl apply -f web.yaml
 sed -i 's/nginx:1.27/nginx:1.28/' web.yaml
 git commit -am "nginx 1.28" && kubectl apply -f web.yaml
 kubectl rollout history deployment/web
 
-# 2. A bad change, pushed through the file
+# 2. A typo pushed through the file
 sed -i 's/nginx:1.28/nginx:no-such-tag/' web.yaml
 git commit -am "bump nginx" && kubectl apply -f web.yaml
 
-# 3. The quick fix, and the trap
+# 3. The quick fix
 kubectl rollout undo deployment/web
 kubectl diff -f web.yaml       # the file and the cluster disagree
 kubectl apply -f web.yaml      # ...and the bad change comes right back
