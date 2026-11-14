@@ -1,0 +1,125 @@
+# Newbernetes · Episode 9 · End to end demo using Uptime: Kuma
+# Every concept from Season 1.
+# Apply:   kubectl apply -f kumademo.yaml
+# Remove:  kubectl delete -f kumademo.yaml   (deletes the namespace, the PVC and Kuma's data)
+---
+# Episode 3: a namespace keeps the demo in one place
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: newbernetes
+---
+# Episode 2: the same web Deployment we've used all season
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: newbernetes
+  labels:
+    app: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27          # Episode 7: a pinned tag
+          ports:
+            - containerPort: 80
+---
+# Episode 3: a consistent name for the web pods
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: newbernetes
+spec:
+  selector:
+    app: web
+  ports:
+    - port: 80
+      targetPort: 80
+---
+# Teaser for next season! Storage!
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kuma-data
+  namespace: newbernetes
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: local-path     # K3s's built-in storage
+  resources:
+    requests:
+      storage: 1Gi
+---
+# The app: Uptime Kuma, with onnly one replica because it stores its data on disk
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kuma
+  namespace: newbernetes
+  labels:
+    app: kuma
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate                 # stop the old pod before starting a new one, so only one pod uses the disk
+  selector:
+    matchLabels:
+      app: kuma
+  template:
+    metadata:
+      labels:
+        app: kuma
+    spec:
+      containers:
+        - name: uptime-kuma
+          image: louislam/uptime-kuma:2   # Episode 7: pins the major version only
+          ports:
+            - containerPort: 3001
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: kuma-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kuma
+  namespace: newbernetes
+spec:
+  selector:
+    app: kuma
+  ports:
+    - port: 3001
+      targetPort: 3001
+---
+# Episode 4: K3s's built-in Traefik routes kuma.localhost to the kuma Service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kuma
+  namespace: newbernetes
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: kuma.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kuma
+                port:
+                  number: 3001
