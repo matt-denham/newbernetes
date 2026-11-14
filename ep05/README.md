@@ -1,8 +1,8 @@
 # Episode 5: kubectl and YAML
 
-`web.yaml` is the Deployment from the demo. It runs three copies of nginx 1.27, and every Kubernetes object has the same four parts you can see in it: `apiVersion` and `kind`, `metadata`, `spec`, and the `status` the cluster writes back for you.
+`web.yaml` is the Deployment from the demo in episode 5. It runs three copies of nginx 1.27, and every Kubernetes object has the same four parts you can see in it: `apiVersion` and `kind`, `metadata`, `spec`, and the `status` the cluster writes back for you.
 
-▶ Watch the episode: https://youtube.com/playlist?list=PLTVdODaaOJ90
+▶ Watch the episode: [Episode 5: kubectl and YAML](https://youtu.be/KlH3OYaEthI?si=ATSJ_C8XzZfSf_8r)
 
 ## Try the demo yourself
 
