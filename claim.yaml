@@ -1,0 +1,21 @@
+# Newbernetes · Episode 10 · Storage
+# Part 1: a namespace and a request for storage (a PersistentVolumeClaim).
+# Apply:   kubectl apply -f claim.yaml
+# Remove:  kubectl delete -f claim.yaml   (deletes the namespace, the claim and its data)
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: storage-demo
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: notes-data
+  namespace: storage-demo
+spec:
+  accessModes: ["ReadWriteOnce"]   # one node can mount it read-write
+  storageClassName: local-path     # K3s's built-in storage
+  resources:
+    requests:
+      storage: 1Gi
